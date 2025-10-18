@@ -9,7 +9,6 @@ router = APIRouter(prefix="/posts", tags=["posts"])
 @router.post("/", response_model=schemas.PostOut)
 def create_post(post_in: schemas.PostCreate, db: Session = Depends(get_db)):
     post = crud.create_post(db, post_in)
-    # соберём лайков/комментариев для ответа
     likes_count = db.query(models.Like).filter(models.Like.post_id == post.id).count()
     return schemas.PostOut(
         id=post.id,
@@ -77,7 +76,6 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
     crud.delete_post(db, p)
     return {"status": "deleted"}
 
-# Toggle like: передаём phone (и опционально имена) как query params или form params
 @router.post("/{post_id}/like")
 def like_toggle(
     post_id: int,
