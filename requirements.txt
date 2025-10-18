@@ -1,5 +1,5 @@
 # --- Core backend ---
-fastapi==0.115.0
+fastapi
 uvicorn[standard]==0.30.3
 pydantic==2.8.2
 sqlalchemy==2.0.32
