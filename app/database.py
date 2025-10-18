@@ -1,4 +1,3 @@
-# app/database.py
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -6,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg2://postgres:postgres@db:5433/recsys_db"
+    "postgresql+psycopg2://recsys_user:recsys_pass@database:5433/recsys_db"
 )
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
