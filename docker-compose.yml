@@ -11,8 +11,7 @@ services:
       - POSTGRES_PASSWORD=recsys_pass
       - POSTGRES_DB=recsys_db
       - POSTGRES_HOST=database
-      - POSTGRES_PORT=5433
-      - DATABASE_URL=postgresql+psycopg2://recsys_user:recsys_pass@database:5433/recsys_db
+      - DATABASE_URL=postgresql+psycopg2://recsys_user:recsys_pass@database:5432/recsys_db
     depends_on:
       database:
         condition: service_healthy
