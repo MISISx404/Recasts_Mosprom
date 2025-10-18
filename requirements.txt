@@ -1,5 +1,5 @@
 # --- Core backend ---
-fastapi==0.115.0
+fastapi
 uvicorn[standard]==0.30.3
 pydantic==2.8.2
 sqlalchemy==2.0.32
@@ -12,7 +12,5 @@ numpy==1.26.4
 scikit-learn==1.5.1
 transformers==4.44.2
 huggingface_hub==0.24.5
-
-# --- PyTorch (CPU version) ---
-torch==2.2.2+cpu-cp311-cp311-manylinux_2_17_x86_64.whl
--f https://download.pytorch.org/whl/cpu
+torch==2.2.2
+--extra-index-url https://download.pytorch.org/whl/cpu
