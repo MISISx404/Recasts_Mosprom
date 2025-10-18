@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+import models, schemas
 from toxic_analis import is_toxic_by_model
 from fastapi import HTTPException
 from typing import List, Optional

@@ -3,10 +3,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-from pydantic import BaseModel
-from typing import List, Optional
-from datetime import datetime
-
 class UserCreate(BaseModel):
     phone: str
     firstname: Optional[str] = None
