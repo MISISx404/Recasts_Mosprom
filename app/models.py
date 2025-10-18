@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, ForeignKey, UniqueConstraint
+    Column, Integer, String, DateTime, Text, ForeignKey, UniqueConstraint, Float
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
@@ -8,11 +8,13 @@ from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)  # internal id
-    phone = Column(String, unique=True, nullable=False)  # клиент передаёт phone
+    id = Column(Integer, primary_key=True)
+    phone = Column(String, unique=True, nullable=False)
     firstname = Column(String, nullable=True)
     surname = Column(String, nullable=True)
     lastname = Column(String, nullable=True)
+    age = Column(Integer, nullable=True)
+    total_points = Column(Float, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     likes = relationship("Like", back_populates="user", cascade="all, delete-orphan")
@@ -25,7 +27,10 @@ class Post(Base):
     description = Column(Text, nullable=False)
     categories = Column(JSONB, nullable=False, default=[])
     age_segment = Column(Integer, nullable=True)
+    age_restriction = Column(Integer, default=0)
     community_id = Column(Integer, nullable=True)
+    quality_score = Column(Float, nullable=True)
+    points_awarded = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     author_name = Column(String, nullable=True)
