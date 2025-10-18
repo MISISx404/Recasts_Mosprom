@@ -10,6 +10,7 @@ aiohttp==3.9.5
 # --- ML / NLP ---
 numpy==1.26.4
 scikit-learn==1.5.1
-torch==2.2.2+cpu
 transformers==4.44.2
 huggingface_hub==0.24.5
+torch==2.2.2+cpu
+--index-url https://download.pytorch.org/whl/cpu
