@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-import models, schemas
-from toxic_analis import is_toxic_by_model
+from app import models, schemas
+from app.toxic_analis import is_toxic_by_model
 from fastapi import HTTPException
 from typing import List, Optional
 
