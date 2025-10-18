@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: recsys-backend
+    ports:
+      - "8000:8000"  # FastAPI по умолчанию
+    environment:
+      - POSTGRES_USER=recsys_user
+      - POSTGRES_PASSWORD=recsys_pass
+      - POSTGRES_DB=recsys_db
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5433
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - recsys-net
+    restart: always
+
+  database:
+    image: postgres:16-alpine
+    container_name: recsys-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=recsys_user
+      - POSTGRES_PASSWORD=recsys_pass
+      - POSTGRES_DB=recsys_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recsys_user -d recsys_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - recsys-data:/var/lib/postgresql/data
+    networks:
+      - recsys-net
+    restart: always
+
+volumes:
+  recsys-data:
+
+networks:
+  recsys-net:
