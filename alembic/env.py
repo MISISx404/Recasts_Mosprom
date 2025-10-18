@@ -9,7 +9,7 @@ from app.models import Base
 
 config = context.config
 fileConfig(config.config_file_name)
-target_metadata = Base.metada
+target_metadata = Base.metadata
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
