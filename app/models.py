@@ -1,6 +1,5 @@
-# app/models.py
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, ForeignKey, Table, UniqueConstraint, func
+    Column, Integer, String, DateTime, Text, ForeignKey, UniqueConstraint
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
@@ -9,8 +8,11 @@ from .database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)  # allow client-specified id or autoincrement
-    username = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True)  # internal id
+    phone = Column(String, unique=True, nullable=False)  # клиент передаёт phone
+    firstname = Column(String, nullable=True)
+    surname = Column(String, nullable=True)
+    lastname = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     likes = relationship("Like", back_populates="user", cascade="all, delete-orphan")

@@ -1,29 +1,58 @@
-# app/crud.py
 from sqlalchemy.orm import Session
 from . import models, schemas
 from toxic_analis import is_toxic_by_model
 from fastapi import HTTPException
-from typing import List
+from typing import List, Optional
 
-def get_user_or_create(db: Session, user_id: int, username: str):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+def _format_author_name(user: models.User) -> str:
+    parts = [user.firstname, user.surname, user.lastname]
+    parts = [p for p in parts if p]
+    if parts:
+        return " ".join(parts)
+    return user.phone  # fallback
+
+def get_user_or_create(db: Session, phone: str, firstname: Optional[str] = None,
+                       surname: Optional[str] = None, lastname: Optional[str] = None) -> models.User:
+    """
+    Find user by phone, create if not exists. Update name fields if provided and different.
+    """
+    user = db.query(models.User).filter(models.User.phone == phone).first()
     if user:
-        # обновим имя при необходимости
-        if username and user.username != username:
-            user.username = username
+        updated = False
+        if firstname and user.firstname != firstname:
+            user.firstname = firstname
+            updated = True
+        if surname and user.surname != surname:
+            user.surname = surname
+            updated = True
+        if lastname and user.lastname != lastname:
+            user.lastname = lastname
+            updated = True
+        if updated:
             db.commit()
             db.refresh(user)
         return user
-    new = models.User(id=user_id if user_id else None, username=username)
+    new = models.User(phone=phone, firstname=firstname, surname=surname, lastname=lastname)
     db.add(new)
     db.commit()
     db.refresh(new)
     return new
 
 def create_post(db: Session, post_in: schemas.PostCreate):
-    # цензура
+    # censorship
     if is_toxic_by_model(post_in.description):
         raise HTTPException(status_code=400, detail="Post contains toxic content")
+
+    author_id = None
+    author_name = None
+    if post_in.author_phone:
+        user = get_user_or_create(db,
+                                  phone=post_in.author_phone,
+                                  firstname=post_in.author_firstname,
+                                  surname=post_in.author_surname,
+                                  lastname=post_in.author_lastname)
+        author_id = user.id
+        author_name = _format_author_name(user)
 
     db_post = models.Post(
         title=post_in.title,
@@ -31,8 +60,8 @@ def create_post(db: Session, post_in: schemas.PostCreate):
         categories=post_in.categories,
         age_segment=post_in.age_segment,
         community_id=post_in.community_id,
-        author_id=post_in.author_id,
-        author_name=post_in.author_name
+        author_id=author_id,
+        author_name=author_name
     )
     db.add(db_post)
     db.commit()
@@ -63,12 +92,13 @@ def add_comment(db: Session, c: schemas.CommentCreate):
     post = get_post(db, c.post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
-    user = get_user_or_create(db, c.author_id, c.author_name)
+    # find/create user by phone
+    user = get_user_or_create(db, c.author_phone, c.author_firstname, c.author_surname, c.author_lastname)
     comment = models.Comment(
         post_id=c.post_id,
         parent_id=c.parent_id,
         author_id=user.id,
-        author_name=user.username,
+        author_name=_format_author_name(user),
         text=c.text
     )
     db.add(comment)
@@ -76,8 +106,12 @@ def add_comment(db: Session, c: schemas.CommentCreate):
     db.refresh(comment)
     return comment
 
-def toggle_like(db: Session, post: models.Post, user_id: int, username: str):
-    user = get_user_or_create(db, user_id, username)
+def toggle_like(db: Session, post: models.Post, phone: str,
+                firstname: Optional[str] = None, surname: Optional[str] = None, lastname: Optional[str] = None):
+    """
+    Toggle like by user's phone. Return dict {"action": "added"/"removed", "likes_count": N}
+    """
+    user = get_user_or_create(db, phone, firstname, surname, lastname)
     existing = (
         db.query(models.Like)
         .filter(models.Like.post_id == post.id)

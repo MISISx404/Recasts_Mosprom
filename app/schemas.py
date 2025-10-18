@@ -3,13 +3,22 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+
 class UserCreate(BaseModel):
-    id: Optional[int] = None
-    username: str
+    phone: str
+    firstname: Optional[str] = None
+    surname: Optional[str] = None
+    lastname: Optional[str] = None
 
 class UserOut(BaseModel):
     id: int
-    username: str
+    phone: str
+    firstname: Optional[str]
+    surname: Optional[str]
+    lastname: Optional[str]
     created_at: datetime
     class Config:
         orm_mode = True
@@ -17,8 +26,10 @@ class UserOut(BaseModel):
 class CommentCreate(BaseModel):
     post_id: int
     parent_id: Optional[int] = None
-    author_id: int
-    author_name: str
+    author_phone: str
+    author_firstname: Optional[str] = None
+    author_surname: Optional[str] = None
+    author_lastname: Optional[str] = None
     text: str
 
 class CommentOut(BaseModel):
@@ -38,8 +49,10 @@ class PostCreate(BaseModel):
     categories: List[str]
     age_segment: Optional[int] = None
     community_id: Optional[int] = None
-    author_id: Optional[int] = None
-    author_name: Optional[str] = None
+    author_phone: Optional[str] = None
+    author_firstname: Optional[str] = None
+    author_surname: Optional[str] = None
+    author_lastname: Optional[str] = None
 
 class PostUpdate(BaseModel):
     title: Optional[str]
