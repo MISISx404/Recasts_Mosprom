@@ -16,7 +16,7 @@ def is_toxic_by_model(text, threshold=0.6):
     print(f"[DEBUG] label type: {type(label)}, label value: '{label}'")
     print(f"[DEBUG] label == 'toxic': {label == 'toxic'}")
     print(f"[DEBUG] score > threshold: {score > threshold}")
-    
+    logs = 1+1
     # Определяем токсичность
     is_toxic = (label == 'toxic') and (score > threshold)
     
