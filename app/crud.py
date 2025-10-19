@@ -44,7 +44,10 @@ def get_user_or_create(db: Session, phone: str, firstname: Optional[str] = None,
     return new
 
 def create_post(db: Session, post_in: schemas.PostCreate):
-    if is_toxic_by_model(post_in.description):
+    
+    toxic = is_toxic_by_model(post_in.description)
+    print(f"Toxic check result: {toxic}")
+    if toxic:
         raise HTTPException(status_code=400, detail="Post contains toxic content")
 
     author_id = None
