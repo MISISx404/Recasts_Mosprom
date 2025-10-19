@@ -7,4 +7,4 @@ def is_toxic_by_model(text, threshold = 0.6):
     score = result['score']
     label = result['label']
     print(f"score: {score:.2f}, label: {label}")
-    return label == 'toxic' and float(score) < threshold 
+    return label == 'toxic' and float(score) > threshold 
