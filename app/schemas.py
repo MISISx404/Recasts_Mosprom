@@ -61,7 +61,7 @@ class PostCreate(BaseModel):
     author_lastname: Optional[str] = None
     author_age: Optional[int] = None
 
-    @validator('age_restriction')
+    @field_validator('age_restriction')
     def validate_age_restriction(cls, v):
         if v not in [0, 6, 12, 16, 18]:
             raise ValueError('Age restriction must be one of: 0, 6, 12, 16, 18')
@@ -75,7 +75,7 @@ class PostUpdate(BaseModel):
     age_restriction: Optional[int]
     community_id: Optional[int]
 
-    @validator('age_restriction')
+    @field_validator('age_restriction')
     def validate_age_restriction(cls, v):
         if v is not None and v not in [0, 6, 12, 16, 18]:
             raise ValueError('Age restriction must be one of: 0, 6, 12, 16, 18')
